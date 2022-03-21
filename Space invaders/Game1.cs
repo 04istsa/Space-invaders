@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Space_invaders
 {
@@ -13,13 +14,18 @@ namespace Space_invaders
         Rectangle planes;
         Texture2D missile;
         Rectangle mispo;
+        Texture2D ufo;
+        Rectangle ufopo;
         KeyboardState tangentbord = Keyboard.GetState();
         int missp = 3;
+
         KeyboardState gammaltTangentbord = Keyboard.GetState();
         int windowWidth;
         int windowHeight;
 
         bool jump = false;
+        List<Rectangle> ufos = new List<Rectangle>();
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -30,10 +36,15 @@ namespace Space_invaders
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             base.Initialize();
+          
 
             FullScreen();
+            for (int i = 0; i < 10; i++)
+            {
+                ufos.Add(new Rectangle((100 + (i * 150)), 100, 60, 30));
+            }
+
         }
 
 
@@ -44,7 +55,8 @@ namespace Space_invaders
             planes = new Rectangle(200, 1050, 50, 100);
             missile = Content.Load<Texture2D>("spaceMissiles_002");
             mispo = new Rectangle(190, 1050, 25, 40);
-
+            ufo = Content.Load<Texture2D>("al");
+           // ufopo = new Rectangle(200, 500, 100, 100);
             // TODO: use this.Content to load your game content here
 
             if (jump)
@@ -84,15 +96,48 @@ namespace Space_invaders
              {
 
               }*/
-            if (tangentbord.IsKeyDown(Keys.Space) /*&& gammaltTangentbord.IsKeyUp(Keys.Space)*/) 
+            if (!jump) { 
+            if (tangentbord.IsKeyDown(Keys.Left))
             {
-                jump = true;
-              }
-            if (jump)
+                mispo.X -= 5;
+            }
+            if (tangentbord.IsKeyDown(Keys.Right))
             {
-                mispo.Y -= 10;
+                mispo.X += 5;
+            }
             }
 
+
+
+
+
+           
+            if (mispo.Y > 0) { 
+                if (tangentbord.IsKeyDown(Keys.Space) /*&& gammaltTangentbord.IsKeyUp(Keys.Space)*/)
+                {
+                    jump = true;
+                }
+                if (jump)
+                {
+                    mispo.Y -= 10;
+                }
+            }
+            else
+            {
+                mispo.Y = 1050;
+                jump = false;
+                mispo.X = planes.X;
+            }
+            for (int i = 0; i < ufos.Count; i++)
+            {
+              
+
+           if (missile.Intersects(ufos[i]))
+            {
+                    ufos[i].Remove();
+            } 
+           
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -104,8 +149,11 @@ namespace Space_invaders
             spriteBatch.Begin();
             spriteBatch.Draw(space, planes, Color.White);
             spriteBatch.Draw(missile, mispo, Color.White);
-
-
+           // spriteBatch.Draw(ufo, ufopo, Color.White);
+            foreach (Rectangle b in ufos)
+            {
+                spriteBatch.Draw(ufo, b, Color.White);
+            }
             spriteBatch.End();
 
             // TODO: Add your drawing code here
