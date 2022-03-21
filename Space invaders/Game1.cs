@@ -124,7 +124,7 @@ namespace Space_invaders
             }
             else
             {
-                mispo.Y = 1050;
+                mispo.Y = 1050;dsd
                 jump = false;
                 mispo.X = planes.X;
             }
