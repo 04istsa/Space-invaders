@@ -16,11 +16,12 @@ namespace Space_invaders
         Rectangle mispo;
         Texture2D ufo;
         Rectangle ufopo;
+        int f = 5;
         KeyboardState tangentbord = Keyboard.GetState();
         int missp = 3;
 
         KeyboardState gammaltTangentbord = Keyboard.GetState();
-        int windowWidth;
+        int windowWidth; 
         int windowHeight;
 
         bool jump = false;
@@ -107,12 +108,8 @@ namespace Space_invaders
             }
             }
 
-
-
-
-
-           
-            if (mispo.Y > 0) { 
+                if (mispo.Y > 0)
+            { 
                 if (tangentbord.IsKeyDown(Keys.Space) /*&& gammaltTangentbord.IsKeyUp(Keys.Space)*/)
                 {
                     jump = true;
@@ -124,25 +121,57 @@ namespace Space_invaders
             }
             else
             {
-                mispo.Y = 1050;dsd
+                mispo.Y = 1050;
                 jump = false;
                 mispo.X = planes.X;
             }
             for (int i = 0; i < ufos.Count; i++)
             {
-              
+                Rectangle nu = ufos[i];
 
-           if (missile.Intersects(ufos[i]))
+           if (mispo.Intersects(nu))
             {
-                    ufos[i].Remove();
+                    ufos.Remove(nu);
+                    mispo.Y = planes.Y;
+                    mispo.X = planes.X;
+                    jump = false;
             } 
            
             }
             // TODO: Add your update logic here
 
+            moveU();
+
             base.Update(gameTime);
         }
-
+        void moveU()
+        {
+            for (int i = 0; i < ufos.Count; i++)
+            {
+                Rectangle temp = ufos[i];
+                
+                if (temp.X < windowWidth - temp.Width)
+                {
+                    temp.X += f;
+                    ufos[i] = temp;
+                }
+                if (temp.X > (windowWidth - temp.Width) || temp.X < 0) 
+                {
+                    f *= -1;
+                }
+              /* if (temp.X < windowWidth)
+                {
+                    temp.X *= -2;
+                    ufos[i] = temp;
+                }*/
+                
+                /*else
+                {
+                    temp.X += 10;
+                }*/
+            }
+        }
+            
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
