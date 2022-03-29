@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System;
 
 namespace Space_invaders
 {
@@ -16,6 +17,8 @@ namespace Space_invaders
         Rectangle mispo;
         Texture2D ufo;
         Rectangle ufopo;
+        Texture2D bomb;
+        Rectangle bombpo;
         int f = 5;
         KeyboardState tangentbord = Keyboard.GetState();
         int missp = 3;
@@ -25,6 +28,7 @@ namespace Space_invaders
         int windowHeight;
 
         bool jump = false;
+        bool drop = true;
         List<Rectangle> ufos = new List<Rectangle>();
         
         public Game1()
@@ -46,6 +50,11 @@ namespace Space_invaders
                 ufos.Add(new Rectangle((100 + (i * 150)), 100, 60, 30));
             }
 
+            Random rnd = new Random();
+            int r = rnd.Next(0, ufos.Count - 1);
+            Rectangle tem = ufos[r];
+            bombpo = new Rectangle(tem.X, 100, 25, 40);
+
         }
 
 
@@ -57,6 +66,8 @@ namespace Space_invaders
             missile = Content.Load<Texture2D>("spaceMissiles_002");
             mispo = new Rectangle(190, 1050, 25, 40);
             ufo = Content.Load<Texture2D>("al");
+            bomb = Content.Load<Texture2D>("bomb");
+            
            // ufopo = new Rectangle(200, 500, 100, 100);
             // TODO: use this.Content to load your game content here
 
@@ -65,6 +76,10 @@ namespace Space_invaders
                 mispo.Y -= 3;
 
                 
+            }
+            if (drop)
+            {
+                bombpo.Y += 3;
             }
         }
         protected void FullScreen()
@@ -85,19 +100,20 @@ namespace Space_invaders
             tangentbord = Keyboard.GetState();
             gammaltTangentbord = tangentbord;
 
-            if (tangentbord.IsKeyDown(Keys.Left))
+          /*  if (tangentbord.IsKeyDown(Keys.Left))
             {
                 planes.X -= 5;
             }
             if (tangentbord.IsKeyDown(Keys.Right))
             {
                 planes.X += 5;
-            }
+            }*/
+
             /* if (tangentbord.IsKeyDown(Keys.Space) && gammaltTangentbord.IsKeyUp(Keys.Space))
              {
 
               }*/
-            if (!jump) { 
+           /* if (!jump) { 
             if (tangentbord.IsKeyDown(Keys.Left))
             {
                 mispo.X -= 5;
@@ -106,17 +122,17 @@ namespace Space_invaders
             {
                 mispo.X += 5;
             }
-            }
+            }*/
 
-                if (mispo.Y > 0)
+               /* if (mispo.Y > 0)
             { 
-                if (tangentbord.IsKeyDown(Keys.Space) /*&& gammaltTangentbord.IsKeyUp(Keys.Space)*/)
+                if (tangentbord.IsKeyDown(Keys.Space) )
                 {
                     jump = true;
                 }
                 if (jump)
                 {
-                    mispo.Y -= 10;
+                    mispo.Y -= 30;
                 }
             }
             else
@@ -124,8 +140,9 @@ namespace Space_invaders
                 mispo.Y = 1050;
                 jump = false;
                 mispo.X = planes.X;
-            }
-            for (int i = 0; i < ufos.Count; i++)
+            } */
+           
+           /* for (int i = 0; i < ufos.Count; i++)
             {
                 Rectangle nu = ufos[i];
 
@@ -137,20 +154,97 @@ namespace Space_invaders
                     jump = false;
             } 
            
-            }
+            }*/
             // TODO: Add your update logic here
+            flyttaMissilX();
 
-            moveU();
+
+
+
+
+            bombDrop();
+            missilTräff();
+            flyttaMissilY();
+
+
+
+
+            flyttaPlan();
+            
+            moveUfoY();
 
             base.Update(gameTime);
         }
-        void moveU()
+        
+        void missilTräff()
+        {
+            for (int i = 0; i < ufos.Count; i++)
+            {
+                Rectangle nu = ufos[i];
+
+                if (mispo.Intersects(nu))
+                {
+                    ufos.Remove(nu);
+                    mispo.Y = planes.Y;
+                    mispo.X = planes.X;
+                    jump = false;
+                }
+
+            }
+        }
+        void flyttaMissilY()
+        {
+            if (mispo.Y > 0)
+            {
+                if (tangentbord.IsKeyDown(Keys.Space))
+                {
+                    jump = true;
+                }
+                if (jump)
+                {
+                    mispo.Y -= 30;
+                }
+            }
+            else
+            {
+                mispo.Y = 1050;
+                jump = false;
+                mispo.X = planes.X;
+            }
+        }
+        void flyttaMissilX()
+        {
+            if (!jump)
+            {
+                if (tangentbord.IsKeyDown(Keys.Left))
+                {
+                    mispo.X -= 5;
+                }
+                if (tangentbord.IsKeyDown(Keys.Right))
+                {
+                    mispo.X += 5;
+                }
+            }
+        }
+        void flyttaPlan()
+        {
+            if (tangentbord.IsKeyDown(Keys.Left))
+            {
+                planes.X -= 5;
+            }
+            if (tangentbord.IsKeyDown(Keys.Right))
+            {
+                planes.X += 5;
+            }
+        }
+        
+        void moveUfoY()
         {
             for (int i = 0; i < ufos.Count; i++)
             {
                 Rectangle temp = ufos[i];
                 
-                if (temp.X < windowWidth - temp.Width)
+                if (temp.X > 0 || temp.X < (windowWidth - temp.Width))
                 {
                     temp.X += f;
                     ufos[i] = temp;
@@ -170,14 +264,36 @@ namespace Space_invaders
                     temp.X += 10;
                 }*/
             }
-        }
             
+            
+        }
+            void bombDrop()
+            {
+               
+                
+                 
+                    if (drop)
+                    {
+                        bombpo.Y += 30;
+                    }
+                    if (bombpo.Y > 1200)
+                     {
+                Random rnd = new Random();
+                int r = rnd.Next(0, ufos.Count - 1);
+                Rectangle tem = ufos[r];
+                bombpo.Y = 150;
+                bombpo.X = tem.X;
+                     }
+                
+            
+            }
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             spriteBatch.Draw(space, planes, Color.White);
             spriteBatch.Draw(missile, mispo, Color.White);
+            spriteBatch.Draw(bomb, bombpo, Color.White);
            // spriteBatch.Draw(ufo, ufopo, Color.White);
             foreach (Rectangle b in ufos)
             {
