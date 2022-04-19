@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
 
+
 namespace Space_invaders
 {
     public class Game1 : Game
@@ -31,6 +32,9 @@ namespace Space_invaders
         int f = 5;
         int at = 3;
         Texture2D extra;
+        Texture2D backGameOver;
+        Rectangle backGameOverpo;
+        Dictionary<string, int> settings = new Dictionary<string, int>();
         
 
         MouseState mouse = Mouse.GetState();
@@ -40,13 +44,15 @@ namespace Space_invaders
         int missp = 3;
 
         KeyboardState gammaltTangentbord = Keyboard.GetState();
-        int windowWidth;
-        int windowHeight;
-
+        int windowWidth = 800;
+        int windowHeight = 480;
+        //480 800
         bool jump = false;
         bool drop = true;
         List<Rectangle> ufos = new List<Rectangle>();
         List<Rectangle> extrap = new List<Rectangle>();
+
+
 
         public Game1()
         {
@@ -60,7 +66,7 @@ namespace Space_invaders
             // TODO: Add your initialization logic here
             base.Initialize();
 
-
+            settings["planespeed"] = 10;
             FullScreen();
             for (int i = 0; i < 10; i++)
             {
@@ -99,7 +105,9 @@ namespace Space_invaders
             bangpo = new Rectangle(100, 100, 400, 400);
             button = Content.Load<Texture2D>("button");
             buttonpo = new Rectangle(100, 100, 100, 100);
-
+            backGameOverpo = new Rectangle(0, 0, windowWidth, windowHeight);
+            //1920 1200
+            backGameOver = Content.Load<Texture2D>("gameover1");
             // ufopo = new Rectangle(200, 500, 100, 100);
             // TODO: use this.Content to load your game content here
 
@@ -120,10 +128,12 @@ namespace Space_invaders
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
 
-            windowWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            windowHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-
+           /* windowWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            windowHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;*/
+            windowWidth = graphics.PreferredBackBufferWidth;
+            windowHeight = graphics.PreferredBackBufferHeight;
             graphics.ApplyChanges();
+
         }
         protected override void Update(GameTime gameTime)
         {
@@ -211,6 +221,11 @@ namespace Space_invaders
                 case 1:
                     uppdateGame();
                     break;
+                
+                case 2:
+                    uppdateGameOver();
+                    break;
+
             }
 
             
@@ -256,7 +271,10 @@ namespace Space_invaders
            moveUfoY();
             träff();
            
-            
+            if (at == 0)
+            {
+                BytScen(2);
+            }
         }
         void missilTräff()
         {
@@ -301,11 +319,11 @@ namespace Space_invaders
             {
                 if (tangentbord.IsKeyDown(Keys.Left))
                 {
-                    mispo.X -= 10;
+                    mispo.X -= settings["planespeed"];
                 }
                 if (tangentbord.IsKeyDown(Keys.Right))
                 {
-                    mispo.X += 10;
+                    mispo.X += settings["planespeed"];
                 }
             }
         }
@@ -313,11 +331,11 @@ namespace Space_invaders
         {
             if (tangentbord.IsKeyDown(Keys.Left))
             {
-                planes.X -= 10;
+                planes.X -= settings["planespeed"];
             }
             if (tangentbord.IsKeyDown(Keys.Right))
             {
-                planes.X += 10;
+                planes.X += settings["planespeed"];
             }
         }
 
@@ -391,6 +409,11 @@ namespace Space_invaders
             }
             }
 
+        void uppdateGameOver()
+        {
+            
+        }
+
         protected override void Draw(GameTime gameTime)
         {
 
@@ -404,6 +427,11 @@ namespace Space_invaders
                 case 1:
                     Drawspel();
                     break;
+
+                case 2:
+                    DrawGameOver();
+                    break;
+
             }
 
 
@@ -464,6 +492,16 @@ namespace Space_invaders
            
         }
 
+        void DrawGameOver()
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+            // spriteBatch.DrawString(arial, välkomstText, välkomstPosition, Color.White);
+            spriteBatch.Draw(backGameOver, backGameOverpo, Color.White);
+         
+            spriteBatch.End();
+        }
 
         //  Du luktar bajs mohahahahahhahaha
     }
