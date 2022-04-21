@@ -110,7 +110,7 @@ namespace Space_invaders
             bangpo = new Rectangle(100, 100, 400, 400);
             button = Content.Load<Texture2D>("button");
             buttonpo = new Rectangle(900, 500, 100, 100);
-            backGameOverpo = new Rectangle(0, 0, windowWidth, windowHeight);
+            backGameOverpo = new Rectangle(0, 0, /*windowWidth*/1920, /*windowHeight*/ 1200);
             //1920 1200
             backGameOver = Content.Load<Texture2D>("gameover1");
             yesbutton = Content.Load<Texture2D>("yes button");
