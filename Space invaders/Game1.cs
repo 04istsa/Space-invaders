@@ -35,11 +35,16 @@ namespace Space_invaders
         Texture2D backGameOver;
         Rectangle backGameOverpo;
         Dictionary<string, int> settings = new Dictionary<string, int>();
-        
 
+        Texture2D yesbutton;
+        Rectangle yesbuttonpo;
+        Texture2D nobutton;
+        Rectangle nobuttonpo;
         MouseState mouse = Mouse.GetState();
         MouseState gammalMus = Mouse.GetState();
-
+        SpriteFont playAgain;
+        Vector2 playAgainPo;
+        string playagstr = "play again";
         KeyboardState tangentbord = Keyboard.GetState();
         int missp = 3;
 
@@ -104,10 +109,16 @@ namespace Space_invaders
             bang = Content.Load<Texture2D>("explosion");
             bangpo = new Rectangle(100, 100, 400, 400);
             button = Content.Load<Texture2D>("button");
-            buttonpo = new Rectangle(100, 100, 100, 100);
+            buttonpo = new Rectangle(900, 500, 100, 100);
             backGameOverpo = new Rectangle(0, 0, windowWidth, windowHeight);
             //1920 1200
             backGameOver = Content.Load<Texture2D>("gameover1");
+            yesbutton = Content.Load<Texture2D>("yes button");
+            yesbuttonpo = new Rectangle(1200, 500, 100, 100);
+            nobutton = Content.Load<Texture2D>("no button");
+            nobuttonpo = new Rectangle(700, 500, 100, 100);
+            playAgain = Content.Load<SpriteFont>("File");
+            playAgainPo = new Vector2(1100, 300);
             // ufopo = new Rectangle(200, 500, 100, 100);
             // TODO: use this.Content to load your game content here
 
@@ -224,6 +235,8 @@ namespace Space_invaders
                 
                 case 2:
                     uppdateGameOver();
+                    at = 3;
+                    reset();
                     break;
 
             }
@@ -275,6 +288,7 @@ namespace Space_invaders
             {
                 BytScen(2);
             }
+
         }
         void missilTräff()
         {
@@ -411,7 +425,36 @@ namespace Space_invaders
 
         void uppdateGameOver()
         {
-            
+            if (VänsterMusTryckt() && yesbuttonpo.Contains(mouse.Position))
+            {
+                BytScen(1);
+                at = 3;
+
+            }
+            if (VänsterMusTryckt() && nobuttonpo.Contains(mouse.Position))
+            {
+                Exit();
+                
+
+            }
+
+
+        }
+        void reset()
+        {
+            ufos.Clear();
+            extrap.Clear();
+            for (int i = 0; i < 10; i++)
+            {
+                ufos.Add(new Rectangle((100 + (i * 150)), 100, 60, 30));
+                ufos.Add(new Rectangle((100 + (i * 150)), 200, 60, 30));
+                ufos.Add(new Rectangle((100 + (i * 150)), 300, 60, 30));
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                extrap.Add(new Rectangle((1500 + (i * 150)), 25, 30, 60));
+            }
+
         }
 
         protected override void Draw(GameTime gameTime)
@@ -499,7 +542,9 @@ namespace Space_invaders
             spriteBatch.Begin();
             // spriteBatch.DrawString(arial, välkomstText, välkomstPosition, Color.White);
             spriteBatch.Draw(backGameOver, backGameOverpo, Color.White);
-         
+            spriteBatch.Draw(yesbutton, yesbuttonpo, Color.White);
+            spriteBatch.Draw(nobutton, nobuttonpo, Color.White);
+            spriteBatch.DrawString(playAgain, playagstr, playAgainPo, Color.White);
             spriteBatch.End();
         }
 
