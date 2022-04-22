@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
+using System.Threading;
 
 
 namespace Space_invaders
@@ -14,27 +15,40 @@ namespace Space_invaders
         SpriteBatch spriteBatch;
         Texture2D space;
         Rectangle planes;
+        
+        
         Texture2D missile;
         Rectangle mispo;
         Texture2D ufo;
-        Rectangle ufopo;
+        
+        //bomb
         Texture2D bomb;
         Rectangle bombpo;
+        
+        //score
         SpriteFont score;
         Vector2 scorepo;
-        Texture2D bang;
-        Rectangle bangpo;
+        
+        //play button
         Texture2D button;
         Rectangle buttonpo;
+        
         string num = " ";
         int points = 0;
         int menu = 0;
         int f = 5;
         int at = 3;
+        int timer = 0;
+
         Texture2D extra;
+        
+        //gameover scene
         Texture2D backGameOver;
         Rectangle backGameOverpo;
+        
+        //settings planes speed
         Dictionary<string, int> settings = new Dictionary<string, int>();
+
 
         Texture2D yesbutton;
         Rectangle yesbuttonpo;
@@ -42,18 +56,32 @@ namespace Space_invaders
         Rectangle nobuttonpo;
         MouseState mouse = Mouse.GetState();
         MouseState gammalMus = Mouse.GetState();
+        
         SpriteFont playAgain;
         Vector2 playAgainPo;
         string playagstr = "play again";
+        
+        
         KeyboardState tangentbord = Keyboard.GetState();
         int missp = 3;
 
         KeyboardState gammaltTangentbord = Keyboard.GetState();
         int windowWidth = 800;
         int windowHeight = 480;
-        //480 800
+       
         bool jump = false;
         bool drop = true;
+        
+       // backgrundwinn
+        Texture2D win;
+        Rectangle winnerpo;
+
+        //backgrund
+        Texture2D spaceinvaders;
+        Rectangle spaceinvaderspo;
+
+
+        //list of ufos 
         List<Rectangle> ufos = new List<Rectangle>();
         List<Rectangle> extrap = new List<Rectangle>();
 
@@ -106,12 +134,11 @@ namespace Space_invaders
             bomb = Content.Load<Texture2D>("bomb");
             score = Content.Load<SpriteFont>("File");
             scorepo = new Vector2(10, 10);
-            bang = Content.Load<Texture2D>("explosion");
-            bangpo = new Rectangle(100, 100, 400, 400);
+            
             button = Content.Load<Texture2D>("button");
             buttonpo = new Rectangle(900, 500, 100, 100);
-            backGameOverpo = new Rectangle(0, 0, /*windowWidth*/1920, /*windowHeight*/ 1200);
-            //1920 1200
+            backGameOverpo = new Rectangle(0, 0, 1920, 1200);
+            
             backGameOver = Content.Load<Texture2D>("gameover1");
             yesbutton = Content.Load<Texture2D>("yes button");
             yesbuttonpo = new Rectangle(1200, 500, 100, 100);
@@ -119,7 +146,15 @@ namespace Space_invaders
             nobuttonpo = new Rectangle(700, 500, 100, 100);
             playAgain = Content.Load<SpriteFont>("File");
             playAgainPo = new Vector2(1100, 300);
-            // ufopo = new Rectangle(200, 500, 100, 100);
+            
+            //win secen
+            win = Content.Load<Texture2D>("winer");
+            winnerpo = new Rectangle(0, 1200, 1920, 1200);
+            
+            //beggineng scene
+            spaceinvaders = Content.Load<Texture2D>("sapceinvaders");
+            spaceinvaderspo = new Rectangle(0, 0, 1920, 1200);
+            
             // TODO: use this.Content to load your game content here
 
             if (jump)
@@ -139,8 +174,7 @@ namespace Space_invaders
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
 
-           /* windowWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            windowHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;*/
+           
             windowWidth = graphics.PreferredBackBufferWidth;
             windowHeight = graphics.PreferredBackBufferHeight;
             graphics.ApplyChanges();
@@ -156,72 +190,8 @@ namespace Space_invaders
             mouse = Mouse.GetState();
             
 
-            {  /*  if (tangentbord.IsKeyDown(Keys.Left))
-              {
-                  planes.X -= 5;
-              }
-              if (tangentbord.IsKeyDown(Keys.Right))
-              {
-                  planes.X += 5;
-              }*/
-
-                /* if (tangentbord.IsKeyDown(Keys.Space) && gammaltTangentbord.IsKeyUp(Keys.Space))
-                 {
-
-                  }*/
-                /* if (!jump) { 
-                 if (tangentbord.IsKeyDown(Keys.Left))
-                 {
-                     mispo.X -= 5;
-                 }
-                 if (tangentbord.IsKeyDown(Keys.Right))
-                 {
-                     mispo.X += 5;
-                 }
-                 }*/
-
-                /* if (mispo.Y > 0)
-             { 
-                 if (tangentbord.IsKeyDown(Keys.Space) )
-                 {
-                     jump = true;
-                 }
-                 if (jump)
-                 {
-                     mispo.Y -= 30;
-                 }
-             }
-             else
-             {
-                 mispo.Y = 1050;
-                 jump = false;
-                 mispo.X = planes.X;
-             } */
-
-                /* for (int i = 0; i < ufos.Count; i++)
-                 {
-                     Rectangle nu = ufos[i];
-
-                if (mispo.Intersects(nu))
-                 {
-                         ufos.Remove(nu);
-                         mispo.Y = planes.Y;
-                         mispo.X = planes.X;
-                         jump = false;
-                 } 
-
-                 }*/
-                // TODO: Add your update logic here
-            };
-           /* flyttaMissilX();
-            bombDrop();
-            missilTräff();
-            flyttaMissilY();
-            gammalMus = mouse;
-            num = $"score {points}";
-            mouse = Mouse.GetState();
-            flyttaPlan();
-            moveUfoY();*/
+          
+           
             
             switch (menu)
             {
@@ -283,6 +253,7 @@ namespace Space_invaders
            flyttaPlan();
            moveUfoY();
             träff();
+            congrat();
            
             if (at == 0)
             {
@@ -422,7 +393,26 @@ namespace Space_invaders
 
             }
             }
+        void congrat()
+        {
+            if (points == 300)
+            {
+             
+                winnerpo.Y = 0;
 
+                
+                
+            }
+            if (winnerpo.Y == 0)
+            {
+                timer++;
+                if (timer >= 600)
+                {
+                    Exit();
+
+                }
+            }
+        }
         void uppdateGameOver()
         {
             if (VänsterMusTryckt() && yesbuttonpo.Contains(mouse.Position))
@@ -440,6 +430,7 @@ namespace Space_invaders
 
 
         }
+
         void reset()
         {
             ufos.Clear();
@@ -456,6 +447,7 @@ namespace Space_invaders
             }
 
         }
+
 
         protected override void Draw(GameTime gameTime)
         {
@@ -505,8 +497,12 @@ namespace Space_invaders
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-           // spriteBatch.DrawString(arial, välkomstText, välkomstPosition, Color.White);
+           
+            spriteBatch.Draw(spaceinvaders, spaceinvaderspo, Color.White);
             spriteBatch.Draw(button, buttonpo, Color.White);
+            
+            
+
             spriteBatch.End();
         }
         void Drawspel()
@@ -516,21 +512,23 @@ namespace Space_invaders
             spriteBatch.Draw(space, planes, Color.White);
             spriteBatch.Draw(missile, mispo, Color.White);
             spriteBatch.Draw(bomb, bombpo, Color.White);
+            spriteBatch.Draw(win, winnerpo, Color.White);
             spriteBatch.DrawString(score, num, scorepo, Color.White);
-           // spriteBatch.Draw(bang, bangpo, Color.White);
+           
 
-            // spriteBatch.Draw(ufo, ufopo, Color.White);
+            // DRAW UFOS 
             foreach (Rectangle b in ufos)
             {
                 spriteBatch.Draw(ufo, b, Color.White);
             }
+            // DRAW LIV
             foreach (Rectangle b in extrap)
             {
                 spriteBatch.Draw(extra, b, Color.White);
             }
             spriteBatch.End();
 
-            // TODO: Add your drawing code here
+            
 
            
         }
@@ -540,7 +538,7 @@ namespace Space_invaders
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            // spriteBatch.DrawString(arial, välkomstText, välkomstPosition, Color.White);
+           
             spriteBatch.Draw(backGameOver, backGameOverpo, Color.White);
             spriteBatch.Draw(yesbutton, yesbuttonpo, Color.White);
             spriteBatch.Draw(nobutton, nobuttonpo, Color.White);
@@ -548,6 +546,6 @@ namespace Space_invaders
             spriteBatch.End();
         }
 
-        //  Du luktar bajs mohahahahahhahaha
+        
     }
 }
